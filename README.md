@@ -1,6 +1,8 @@
-###Directory structure:
+### Directory Structure:
+* Root
+  * OBSE
+    * Contents of this repository
+  * OBSE Plugin
+    * Contents of its repository
 
-*Root
-	*OBSE
-		*Contents of this repository
-	*OBSE Plugins
+Some plugins may have other dependencies too.
