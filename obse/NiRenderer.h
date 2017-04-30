@@ -338,7 +338,7 @@ public:
 	D3DMATRIX	unk940;						// 940
 	D3DMATRIX	viewMatrix;					// 980
 	D3DMATRIX	projMatrix;					// 9C0
-	D3DMATRIX	unkA00;						// A00
+	D3DMATRIX	invViewMatrix;				// A00
 	void		* unkA40;					// A40
 	void		* unkA44;					// A44
 	void		* unkA48;					// A48

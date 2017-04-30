@@ -1,5 +1,6 @@
 #pragma once
 #include "Utilities.h"
+#include <d3d9.h>
 
 // 8
 struct NiRTTI
@@ -12,6 +13,8 @@ struct NiRTTI
 struct NiVector3
 {
 	float	x, y, z;
+
+	static void Cross(const NiVector3& v1, const NiVector3& v2, NiVector3& out);
 };
 
 // 10 - always aligned?
@@ -29,7 +32,14 @@ struct NiQuaternion
 // 24
 struct NiMatrix33
 {
-	float	data[9];
+	union
+	{
+		float	data[9];
+		float	m[3][3];
+	};
+
+	float GetEntry(unsigned int uiRow, unsigned int uiCol) const;
+	void GetCol(unsigned int uiCol, NiVector3& col) const;
 };
 
 // 34
@@ -38,6 +48,10 @@ struct NiTransform
 	NiMatrix33	rotate;		// 00
 	NiVector3	translate;	// 24
 	float		scale;		// 30
+
+	void ExtractAngleAndAxis(float& fAngle, float& fX, float& fY, float& fZ) const;
+	void GetD3D(D3DMATRIX& out) const;
+	void GetD3DTranspose(D3DMATRIX& out) const;
 };
 
 // 10

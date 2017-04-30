@@ -95,12 +95,26 @@ public:
 	UInt16						m_flagsPad;				// 01A
 	NiAVObject					* m_parent;				// 01C
 	NiSphere					m_kWorldBound;			// 020
-	NiMatrix33					m_localRotate;			// 030
-	NiVector3					m_localTranslate;		// 054
-	float						m_fLocalScale;			// 060
-	NiMatrix33					m_worldRotate;			// 064
-	NiVector3					m_worldTranslate;		// 088
-	float						m_worldScale;			// 094
+	union
+	{
+		NiTransform				m_localTransform;		// 030
+		struct
+		{
+			NiMatrix33			m_localRotate;			// 030
+			NiVector3			m_localTranslate;		// 054
+			float				m_fLocalScale;			// 060
+		};
+	};
+	union
+	{
+		NiTransform				m_worldTransform;		// 064
+		struct
+		{
+			NiMatrix33			m_worldRotate;			// 064
+			NiVector3			m_worldTranslate;		// 088
+			float				m_worldScale;			// 094
+		};
+	};
 	NiTListBase <NiProperty>	m_propertyList;			// 098
 	NiObject					* m_spCollisionObject;	// 0A8
 
@@ -117,6 +131,7 @@ public:
 			m_flags &= ~kFlag_AppCulled;
 	}
 };
+STATIC_ASSERT(sizeof(NiAVObject) == 0xAC);
 
 // DC+
 class NiDynamicEffect : public NiAVObject
@@ -518,13 +533,28 @@ public:
 	NiCamera();
 	~NiCamera();
 
-	UInt32		unk0AC[(0xEC - 0xAC) >> 2];	// 0AC
+	float		m_aafWorldToCam[4][4];		// 0AC
 	NiFrustum	m_kViewFrustum;				// 0EC
 	float		m_fMinNearPlaneDist;		// 108
 	float		m_fMaxFarNearRatio;			// 10C
 	NiViewport	m_kPort;					// 110
 	float		unk120;						// 120
+
+	NiVector3	GetWorldUpVector() const
+	{
+		NiVector3 kDVector;
+		m_worldRotate.GetCol(0, kDVector);
+		return kDVector;
+	}
+
+	NiVector3	GetWorldDirection() const
+	{
+		NiVector3 kUVector;
+		m_worldRotate.GetCol(1, kUVector);
+		return kUVector;
+	}
 };
+STATIC_ASSERT(sizeof(NiCamera) == 0x124);
 
 class BSRenderedTexture;
 
