@@ -499,6 +499,13 @@ public:
 	NiPlane	m_kWorldPlane;	// 0EC
 };
 
+
+// ?
+class BSTreeNode : public NiNode
+{
+public:
+};
+
 // 130
 class ShadowSceneNode : public NiNode
 {
@@ -761,3 +768,53 @@ public:
 	UInt8	unk0C4;					// 0C4
 	UInt32	unk0C5[3];				// 0C5
 };
+
+
+// 220
+class ShadowSceneLight : public NiRefObject
+{
+public:
+	ShadowSceneLight();
+	~ShadowSceneLight();
+
+	UInt32												unk08[(0xD4 - 0x8) >> 2];
+	float												unkD4;				// D4 - fade alpha related
+	float												currentFadeAlpha;	// D8
+	float												unkDC;
+	float												unkE0;
+	NiTPointerList<NiTriBasedGeom>						unkE4;		// light receiver geometry?
+	UInt8												unkF4;		// shadow map rendered/casts shadow flag?
+	UInt8												unkF5;		// use cubemap camera when set?
+	UInt8												unkF5Pad[2];
+	float												unkF8;
+	UInt8												unkFC;
+	UInt8												unkFCPad[3];
+	NiPointLight*										sourceLight;// 100 - parent light
+	UInt8												unk104;
+	UInt8												unk104Pad[3];
+	NiVector3											unk108;		// sourceLight->m_worldTranslate
+	BSRenderedTexture*									shadowMap;	// 114 - shadow map texture
+	UInt16												lightState;		// when 0xFF, light source is culled (not active)
+	UInt16												unk11A;
+	UInt32												unk11C;
+	UInt8												unk120;		// force render shadow map?
+	UInt8												pad121[3];
+	NiPointer<BSCubeMapCamera>							unk124;		// light camera?
+	UInt32												unk128;
+	UInt8												showDebug;	// 12C - debug shader toggle
+	UInt8												unk12CPad[3];
+	NiNode*												sourceNode;	// 130 - node being lighted/shadowed
+	NiTPointerList<NiAVObject>							unk134;
+	NiTPointerList<NiTriBasedGeom>::Node*				unk144;		// points to the fence trishape
+	NiPointer<NiTriShape>								unk148;		// name set as "fence"
+	NiCamera*											unk14C;		// used when performing LOS checks/frustum culling
+	BVIntersectionData									unk150;		// used when updating shadow receiver geometry
+	BVIntersectionData									unk1B4;
+	UInt32												unk218;
+	UInt32												unk21C;
+};
+STATIC_ASSERT(offsetof(ShadowSceneLight, unkD4) == 0xD4);
+STATIC_ASSERT(offsetof(ShadowSceneLight, sourceLight) == 0x100);
+STATIC_ASSERT(offsetof(ShadowSceneLight, sourceNode) == 0x130);
+STATIC_ASSERT(offsetof(ShadowSceneLight, unk150) == 0x150);
+STATIC_ASSERT(sizeof(ShadowSceneLight) == 0x220);

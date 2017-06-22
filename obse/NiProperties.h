@@ -37,6 +37,8 @@
  *	NiDitherProperty										0B	1C
  */
 
+class ShadowSceneLight;
+
 // 018
 class NiProperty : public NiObjectNET
 {
@@ -381,15 +383,23 @@ public:
 
 	enum { kType = 0x04 };
 
+	// 10
 	class RenderPass
 	{
 	public:
 		RenderPass();
 		~RenderPass();
 
-		UInt32	unk00;		// 00 - vtbl?
-		UInt16	type;		// 04 - see 007B4920
-		UInt8	isFPass;	// 06
+		NiGeometry*				geom;		// 00
+		UInt16					type;		// 04
+		UInt8					isFPass;	// 06
+		UInt8					unk07;		// 07 - init to 0
+		UInt8					unk08;		// 08 - size of unk0C array
+		UInt8					unk09;		// 09
+		UInt16					pad0A;
+		ShadowSceneLight**		unk0C;		// 0C
+
+		const char*				GetRenderPassName();
 	};
 
 	virtual UInt32	Unk_15(void);		// returns 0 - may be a 'get type'
@@ -1000,3 +1010,4 @@ public:
 	NiZBufferProperty*				zBuffer;				// 2C
 };
 STATIC_ASSERT(sizeof(NiPropertyState) == 0x30);
+

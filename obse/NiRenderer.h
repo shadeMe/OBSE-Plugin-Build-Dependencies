@@ -51,6 +51,8 @@ public:
 	UInt32	unk014;	// 014
 };
 
+
+
 // 24
 class NiRenderTargetGroup : public NiObject
 {
@@ -367,6 +369,64 @@ STATIC_ASSERT(offsetof(D3DCAPS9, MaxTextureBlendStages) == 0x94);
 
 extern NiDX9Renderer **	g_renderer;
 
+// 60
+class NiDX9TextureData
+{
+public:
+	NiDX9TextureData();
+	~NiDX9TextureData();
+
+	// 44
+	// ### are all members signed?
+	struct Unk0C
+	{								//			initialized to
+		UInt8			unk00;		// 00		1
+		UInt8			pad00[3];
+		UInt32			unk04;		// 04		2
+		UInt32			unk08;		// 08		0
+		SInt32			unk0C;		// 0C		-1
+		UInt32			unk10;		// 10		0
+		UInt32			unk14;		// 14		16
+		UInt32			unk18;		// 18		3
+		UInt8			unk1C;		// 1C		8
+		UInt8			pad1C[3];
+		UInt32			unk20;		// 20		19
+		UInt32			unk24;		// 24		5
+		UInt8			unk28;		// 28		0
+		UInt8			unk29;		// 29		1
+		UInt8			pad2A[2];
+		UInt32			unk2C;		// 2C		19
+		UInt32			unk30;		// 30		5
+		UInt8			unk34;		// 34		0
+		UInt8			unk35;		// 35		1
+		UInt8			pad36[2];
+		UInt32			unk38;		// 38		19
+		UInt32			unk3C;		// 3C		5
+		UInt8			unk40;		// 40		0
+		UInt8			unk41;		// 41		1
+		UInt8			pad42[2];
+	};
+
+	//void*							vtbl;			// 00
+	NiRenderedTexture*				unk04;			// 04	parent texture
+	NiDX9Renderer*					unk08;			// 08	parent renderer
+	Unk0C							unk0C;			// 0C
+	UInt32							unk50;			// 50
+	UInt32							unk54;			// 54
+	UInt32							surfaceWidth;	// 58
+	UInt32							surfaceHeight;	// 5C
+};
+
+// 64
+class NiDX9RenderedTextureData : public NiDX9TextureData
+{
+public:
+	NiDX9RenderedTextureData();
+	~NiDX9RenderedTextureData();
+
+	UInt32							unk60;			// 60
+};
+
 // 0C
 class NiAccumulator : public NiObject
 {
@@ -518,3 +578,50 @@ STATIC_ASSERT(offsetof(BSShaderAccumulator, sunOcclusionPixels) == 0x00BC);
 STATIC_ASSERT(offsetof(BSShaderAccumulator, unk00C8) == 0x00C8);
 STATIC_ASSERT(offsetof(BSShaderAccumulator, unk0104) == 0x0104);
 STATIC_ASSERT(sizeof(BSShaderAccumulator) == 0x226C);
+
+// 24
+class BSRenderedTexture : public NiRefObject
+{
+public:
+	// members
+	///*00*/ NiRefObject
+	/*08*/ NiRenderTargetGroup*		renderTargets;
+	/*0C*/ UInt32					unk0C;
+	/*10*/ UInt32					unk10;
+	/*14*/ UInt32					unk14;
+	/*18*/ UInt32					unk18;
+	/*1C*/ UInt32					unk1C;
+	/*20*/ NiRenderedTexture*		renderedTexture;
+};
+
+// manages off-screen render targets
+// 48
+class BSTextureManager
+{
+public:
+	// ?
+	struct RenderedTextureData
+	{
+		UInt32		unk00;
+	};
+
+	NiTPointerList<RenderedTextureData>				unk00;				// 00
+	NiTPointerList<RenderedTextureData>				unk10;				// 10
+	NiTPointerList<BSRenderedTexture>				shadowMaps;			// 20
+	NiTPointerList<BSRenderedTexture>				unk30;				// 30
+	void*											unk40;				// 40 - smart pointer, screenshot rendertarget?
+	void*											unk44;				// 44 - smart pointer
+
+																		// methods
+	BSRenderedTexture*								FetchShadowMap(void);
+	void											DiscardShadowMap(BSRenderedTexture* Texture);
+	void											ReserveShadowMaps(UInt32 Count);
+
+	BSRenderedTexture*								GetDefaultRenderTarget(UInt32 Type);
+
+	static BSTextureManager*						CreateInstance(void);
+	void											DeleteInstance(void);
+
+	static BSTextureManager**						Singleton;
+};
+STATIC_ASSERT(sizeof(BSTextureManager) == 0x48);

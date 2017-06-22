@@ -3201,6 +3201,36 @@ public:
 		kFlags0_BehaveLikeExterior =	1 << 7,
 	};
 
+	// direct children of the cell's NiNode
+	enum
+	{
+		kNodeChild_Actor	= 0,
+		kNodeChild_Marker	= 1,
+		kNodeChild_Quad0	= 2,		// interiors only contain this quad
+		kNodeChild_Quad1	= 3,
+		kNodeChild_Quad2	= 4,
+		kNodeChild_Quad3	= 5,
+	};
+
+	enum
+	{
+		kQuadSubnode_Land			= 0,
+		kQuadSubnode_Water			= 1,
+		kQuadSubnode_StaticObject	= 2,
+		kQuadSubnode_ActiveObject	= 3,
+	};
+
+	enum
+	{
+		kCellProcessLevel_None = 0x0,  // default value, no associated NiNode or Havok objects
+		kCellProcessLevel_Removing = 0x1,  // set while nodes and havok objects are being destroyed
+		kCellProcessLevel_Building = 0x2,  // set while nodes and havok objects are being created
+		kCellProcessLevel_Loaded = 0x3,  // loaded cells that are not processed
+		kCellProcessLevel_Deactivating = 0x4,
+		kCellProcessLevel_Active = 0x6,  // current interior cell, or exterior cells within fixed radius of current exterior cell
+		kCellProcessLevel__MAX = 0x7
+	};
+
 	TESObjectCELL();
 	~TESObjectCELL();
 
@@ -3238,7 +3268,7 @@ public:
 	// members
 	UInt8			flags0;			// 024
 	UInt8			flags1;			// 025
-	UInt8			flags2;			// 026
+	UInt8			processLevel;			// 026
 	UInt8			pad27;			// 027
 	ExtraDataList	extraData;		// 028 includes ExtraEditorID
 	union {

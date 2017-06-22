@@ -145,3 +145,11 @@ void NiVector3::Cross(const NiVector3& v1, const NiVector3& v2, NiVector3& out)
 	out.y = v1.z * v2.x - v1.x * v2.z;
 	out.z = v1.x * v2.y - v1.y * v2.x;
 }
+
+NiVector3& NiVector3::operator=(const Vector3& RHS)
+{
+	x = RHS.x;
+	y = RHS.y;
+	z = RHS.z;
+	return *this;
+}

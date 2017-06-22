@@ -15,6 +15,7 @@ struct NiVector3
 	float	x, y, z;
 
 	static void Cross(const NiVector3& v1, const NiVector3& v2, NiVector3& out);
+	NiVector3& operator=(const Vector3& RHS);
 };
 
 // 10 - always aligned?
@@ -439,3 +440,11 @@ public:
 	void*	data;		// 0C
 	UInt32	count;		// 10
 };
+
+// 64
+struct BVIntersectionData
+{
+	NiPlane							planes[6];				// 00
+	UInt32							intersections;			// 60 - bit field, mask = 0x3F (6 bits)
+};
+STATIC_ASSERT(sizeof(BVIntersectionData) == 0x64);
